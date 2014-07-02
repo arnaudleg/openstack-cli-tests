@@ -30,13 +30,13 @@ def parse_config(config):
     return out
 
 
-class ImageCreateTest(testtools.TestCase):
+class ImageTest(testtools.TestCase):
 
     http_image = ('http://partnerweb.vmware.com/programs/vmdkimage/'
                   'cirros-0.3.0-i386-disk.vmdk')
 
     def setUp(self):
-        super(ImageCreateTest, self).setUp()
+        super(ImageTest, self).setUp()
         config_path = os.environ.get('TEST_CONF')
         if not config_path:
             config_path = os.path.join(os.getcwd(), 'etc/openstack.conf')
@@ -62,7 +62,8 @@ class ImageCreateTest(testtools.TestCase):
             image = self.glance.images.get(image.id)
             time.sleep(1)
 
-    def test_create_image_copy_from(self):
+    def test_image_lifecycle_copy_from(self):
+        test_name = 'test_image_lifecycle_copy_from'
         start_time = time.time()
         image = self.glance.images.create(
             name='image_test1',
@@ -74,11 +75,23 @@ class ImageCreateTest(testtools.TestCase):
                  'vmware-adaptertype': 'ide'})
         self.wait_for_status(image, 'active')
         print (
-            'test_create_image_copy_from', '%s uploaded in %s sec' %
+            test_name, '%s uploaded in %s sec' %
             (str(size(image.size)), str(round(time.time() - start_time))))
-        self.glance.images.delete(image)
 
-    def test_create_image_from_local(self):
+        start_time = time.time()
+        self.glance.images.data(image)
+        print (
+            test_name, '%s got in %s sec' %
+            (str(size(image.size)), str(round(time.time() - start_time))))
+
+        start_time = time.time()
+        self.glance.images.delete(image)
+        print (
+            test_name, '%s deleted in %s sec' %
+            (str(size(image.size)), str(round(time.time() - start_time))))
+
+    def test_image_lifecycle_from_local(self):
+        test_name = 'test_image_lifecycle_from_local'
         start_time = time.time()
         data = os.path.join(os.getcwd(), 'files/cirros-0.3.0-i386-disk.vmdk')
         image = self.glance.images.create(
@@ -91,6 +104,17 @@ class ImageCreateTest(testtools.TestCase):
                  'vmware-adaptertype': 'ide'})
         self.wait_for_status(image, 'active')
         print (
-            'test_create_image_from_local', '%s uploaded in %s sec' %
+            test_name, '%s uploaded in %s sec' %
             (str(size(image.size)), str(round(time.time() - start_time))))
+
+        start_time = time.time()
+        self.glance.images.data(image)
+        print (
+            test_name, '%s got in %s sec' %
+            (str(size(image.size)), str(round(time.time() - start_time))))
+
+        start_time = time.time()
         self.glance.images.delete(image)
+        print (
+            test_name, '%s deleted in %s sec' %
+            (str(size(image.size)), str(round(time.time() - start_time))))
