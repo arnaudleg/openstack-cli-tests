@@ -8,4 +8,4 @@ use
 
 python -m unittest discover glance-cli-tests
 
-python -m unittest test_image_create
+python -m unittest test_image
