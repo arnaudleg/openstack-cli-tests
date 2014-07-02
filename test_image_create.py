@@ -32,8 +32,8 @@ def parse_config(config):
 
 class ImageCreateTest(testtools.TestCase):
 
-    http_image = ('https://github.com/arnaudleg/glance-cli-tests/blob/master/'
-                  'files/cirros-monosparse.vmdk?raw=true')
+    http_image = ('http://partnerweb.vmware.com/programs/vmdkimage/'
+                  'cirros-0.3.0-i386-disk.vmdk')
 
     def setUp(self):
         super(ImageCreateTest, self).setUp()
@@ -80,7 +80,7 @@ class ImageCreateTest(testtools.TestCase):
 
     def test_create_image_from_local(self):
         start_time = time.time()
-        data = os.path.join(os.getcwd(), 'files/cirros-monosparse.vmdk')
+        data = os.path.join(os.getcwd(), 'files/cirros-0.3.0-i386-disk.vmdk')
         image = self.glance.images.create(
             name='image_test1',
             container_format='bare',
