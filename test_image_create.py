@@ -32,8 +32,8 @@ def parse_config(config):
 
 class ImageCreateTest(testtools.TestCase):
 
-    http_image = ('http://partnerweb.vmware.com/programs/'
-                  'vmdkimage/trend-tinyvm1-flat-;ide;.vmdk')
+    http_image = ('https://github.com/arnaudleg/glance-cli-tests/blob/master/'
+                  'files/cirros-monosparse.vmdk?raw=true')
 
     def setUp(self):
         super(ImageCreateTest, self).setUp()
