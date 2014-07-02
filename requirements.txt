@@ -1,0 +1,4 @@
+hurry.filesize
+python-glanceclient
+python-keystoneclient
+testtools
