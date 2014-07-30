@@ -3,8 +3,8 @@ import os
 import time
 
 from hurry.filesize import size
-import testtools
 
+import base
 from keystoneclient.v2_0 import client as keystone_cli
 import glanceclient
 
@@ -30,10 +30,7 @@ def parse_config(config):
     return out
 
 
-class ImageTest(testtools.TestCase):
-
-    http_image = ('http://partnerweb.vmware.com/programs/vmdkimage/'
-                  'cirros-0.3.0-i386-disk.vmdk')
+class ImageTest(base.Base):
 
     def setUp(self):
         super(ImageTest, self).setUp()
@@ -43,24 +40,11 @@ class ImageTest(testtools.TestCase):
         raw_config = read_config(config_path)
         self.config = parse_config(raw_config)
         params = {}
+        self.keystone = keystone_cli.Client(**self.keystone_creds)
         params['token'] = self.keystone.auth_token
         self.glance = glanceclient.Client(
             str(self.config['glance_api_version']), endpoint=self.config
             ['glance_endpoint'], **params)
-
-    @property
-    def keystone(self):
-        return keystone_cli.Client(username=self.config['username'],
-                                   password=self.config['password'],
-                                   tenant_name=self.config['tenant_name'],
-                                   auth_url=self.config['keystone_endpoint'])
-
-    def wait_for_status(self, image, status):
-        while image.status != status:
-            if image.status == 'killed':
-                self.fail('image %s killed' % image.id)
-            image = self.glance.images.get(image.id)
-            time.sleep(1)
 
     def test_image_lifecycle_copy_from(self):
         test_name = 'test_image_lifecycle_copy_from'
@@ -73,7 +57,7 @@ class ImageTest(testtools.TestCase):
             copy_from=self.http_image,
             properties={'vmware-disktype': 'sparse',
                  'vmware-adaptertype': 'ide'})
-        self.wait_for_status(image, 'active')
+        self.wait_for_image_status(image, 'active')
         print (
             test_name, '%s uploaded in %s sec' %
             (str(size(image.size)), str(round(time.time() - start_time))))
@@ -102,7 +86,7 @@ class ImageTest(testtools.TestCase):
             data=open(data, 'rb'),
             properties={'vmware-disktype': 'sparse',
                  'vmware-adaptertype': 'ide'})
-        self.wait_for_status(image, 'active')
+        self.wait_for_image_status(image, 'active')
         print (
             test_name, '%s uploaded in %s sec' %
             (str(size(image.size)), str(round(time.time() - start_time))))

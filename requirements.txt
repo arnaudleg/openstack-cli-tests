@@ -1,4 +1,5 @@
 hurry.filesize
 python-glanceclient
 python-keystoneclient
+python-novaclient
 testtools
