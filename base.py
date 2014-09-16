@@ -13,7 +13,7 @@ class Base(testtools.TestCase):
     # http_image = ('http://partnerweb.vmware.com/programs/vmdkimage/'
     #             'debian-2.6.32-i686.vmdk')
 
-    flavor = 'm1.small'
+    flavor = 'm1.tiny'
     image_props = {'vmware-disktype': 'preallocated',
                    'vmware-adaptertype': 'lsiLogic'}
 
