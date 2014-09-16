@@ -62,13 +62,13 @@ class ComputeTest(base.Base):
             is_public=True,
             disk_format='vmdk',
             copy_from=self.http_image,
-            properties=base.Base.image_props)
+            properties=self.image_props)
         self.wait_for_image_status(image, 'active')
         print (test_name, '%s uploaded in %s sec' %
                (str(size(image.size)), str(round(
                 time.time() - image_start_time))))
 
-        flavor = self.nova.flavors.find(name=base.Base.flavor)
+        flavor = self.nova.flavors.find(name=self.flavor)
         im = self.nova.images.find(name=image_name)
         spawn_time = time.time()
         instance = self.nova.servers.create(name="test",
@@ -106,4 +106,9 @@ class ComputeTest(base.Base):
         self.glance.images.delete(image)
         print (test_name, '%s deleted in %s sec' %
                (str(size(image.size)), str(round(
+                   time.time() - image_start_time))))
+        image_start_time = time.time()
+        self.glance.images.delete(snapshot)
+        print (test_name, '%s deleted in %s sec' %
+               (str(size(snapshot.size)), str(round(
                    time.time() - image_start_time))))
