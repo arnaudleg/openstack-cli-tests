@@ -54,7 +54,6 @@ class ComputeTest(base.Base):
     def test_compute_lifecycle(self):
         test_name = 'test_compute_lifecycle'
         image_name = 'image_test_%s' % str(uuid.uuid4())
-        flavor_name = 'm1.small'
         start_time = time.time()
         image_start_time = time.time()
         image = self.glance.images.create(
@@ -62,15 +61,14 @@ class ComputeTest(base.Base):
             container_format='bare',
             is_public=True,
             disk_format='vmdk',
-            copy_from=self.http_image)
-            # properties={'vmware-disktype': 'sparse',
-                        # 'vmware-adaptertype': 'ide'})
+            copy_from=self.http_image,
+            properties=base.Base.image_props)
         self.wait_for_image_status(image, 'active')
         print (test_name, '%s uploaded in %s sec' %
                (str(size(image.size)), str(round(
                 time.time() - image_start_time))))
 
-        flavor = self.nova.flavors.find(name=flavor_name)
+        flavor = self.nova.flavors.find(name=base.Base.flavor)
         im = self.nova.images.find(name=image_name)
         spawn_time = time.time()
         instance = self.nova.servers.create(name="test",
